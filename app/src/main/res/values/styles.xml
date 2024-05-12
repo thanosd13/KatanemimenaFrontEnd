@@ -1,0 +1,12 @@
+<resources>
+    <!-- Στυλ για το BottomNavigationView με μικρότερο ύψος -->
+    <style name="MyBottomNavigationView" parent="Widget.MaterialComponents.BottomNavigationView">
+        <item name="itemIconSize">16dp</item>  <!-- Μικρότερο μέγεθος εικονιδίων -->
+        <item name="itemTextAppearance">@style/MyBottomNavigationViewTextAppearanceSmall</item>
+    </style>
+
+    <!-- Στυλ για την εμφάνιση κειμένου στο BottomNavigationView με μικρότερο κείμενο -->
+    <style name="MyBottomNavigationViewTextAppearanceSmall">
+        <item name="android:textSize">8sp</item>  <!-- Μικρότερο μέγεθος κειμένου -->
+    </style>
+</resources>
