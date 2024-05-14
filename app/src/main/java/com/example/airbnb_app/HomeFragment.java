@@ -1,8 +1,8 @@
 package com.example.airbnb_app;
 
 import android.os.Bundle;
-
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -16,16 +16,14 @@ import com.example.airbnb_app.model.TopPlacesData;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HomeFragment extends Fragment {
+public class HomeFragment extends Fragment implements TopPlacesAdapter.OnPlaceClickListener {
 
     private RecyclerView topPlacesRecycler;
     private TopPlacesAdapter topPlacesAdapter;
 
+    // Use simple string keys for arguments if necessary
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-
-    private String mParam1;
-    private String mParam2;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -43,15 +41,10 @@ public class HomeFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_home, container, false);
     }
@@ -64,17 +57,28 @@ public class HomeFragment extends Fragment {
 
     private void initRecyclerView(View rootView) {
         topPlacesRecycler = rootView.findViewById(R.id.top_places_recycler);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false);
-        topPlacesRecycler.setLayoutManager(layoutManager);
+        topPlacesRecycler.setLayoutManager(new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false));
 
         List<TopPlacesData> topPlacesDataList = new ArrayList<>();
         topPlacesDataList.add(new TopPlacesData("room 1", "Athens, Greece", "$200 - $500", R.drawable.test2));
         topPlacesDataList.add(new TopPlacesData("room 2", "Athens, Glyfada", "$200 - $500", R.drawable.test2));
-        topPlacesDataList.add(new TopPlacesData("Kasimir Hill", "India", "$200 - $500", R.drawable.topplaces));
-        topPlacesDataList.add(new TopPlacesData("Kasimir Hill", "India", "$200 - $500", R.drawable.topplaces));
-        topPlacesDataList.add(new TopPlacesData("Kasimir Hill", "India", "$200 - $500", R.drawable.topplaces));
+        topPlacesDataList.add(new TopPlacesData("room 1", "Athens, Greece", "$200 - $500", R.drawable.test2));
+        topPlacesDataList.add(new TopPlacesData("room 1", "Athens, Greece", "$200 - $500", R.drawable.topplaces));
 
-        topPlacesAdapter = new TopPlacesAdapter(getContext(), topPlacesDataList);
+        topPlacesAdapter = new TopPlacesAdapter(getContext(), topPlacesDataList, this);
         topPlacesRecycler.setAdapter(topPlacesAdapter);
+    }
+
+    @Override
+    public void onPlaceClick(TopPlacesData place) {
+        // Ensure that the activity is correctly handling the fragment manager
+        if(getActivity() != null) {
+            RoomFragment roomFragment = RoomFragment.newInstance(
+                    place.getPlaceName(), place.getCountryName(), place.getPrice(), place.getImageUrl());
+            FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.fragment_container, roomFragment);
+            transaction.addToBackStack(null);
+            transaction.commit();
+        }
     }
 }

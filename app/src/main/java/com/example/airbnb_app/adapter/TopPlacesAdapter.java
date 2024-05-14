@@ -1,9 +1,6 @@
 package com.example.airbnb_app.adapter;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.graphics.Rect;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,52 +17,41 @@ import java.util.List;
 
 public class TopPlacesAdapter extends RecyclerView.Adapter<TopPlacesAdapter.TopPlacesViewHolder> {
 
-    Context context;
-    List<TopPlacesData> topPlacesDataList;
+    private Context context;
+    private List<TopPlacesData> topPlacesDataList;
+    private OnPlaceClickListener listener;
 
-    public TopPlacesAdapter(Context context, List<TopPlacesData> topPlacesDataList) {
+    public interface OnPlaceClickListener {
+        void onPlaceClick(TopPlacesData place);
+    }
+
+    public TopPlacesAdapter(Context context, List<TopPlacesData> topPlacesDataList, OnPlaceClickListener listener) {
         this.context = context;
         this.topPlacesDataList = topPlacesDataList;
+        this.listener = listener;
     }
 
     @NonNull
     @Override
     public TopPlacesViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-
         View view = LayoutInflater.from(context).inflate(R.layout.top_places_row_item, parent, false);
-
-        // here we create a recyclerview row item layout file
         return new TopPlacesViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull TopPlacesViewHolder holder, int position) {
-
-        TopPlacesData data = topPlacesDataList.get(position);  // This line should be here
+        TopPlacesData data = topPlacesDataList.get(position);
 
         holder.countryName.setText(data.getCountryName());
         holder.placeName.setText(data.getPlaceName());
         holder.price.setText(data.getPrice());
         holder.placeImage.setImageResource(data.getImageUrl());
 
-
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                builder.setTitle("Room Details");
-                builder.setMessage("You have selected: " + data.getPlaceName() + " in " + data.getCountryName());
-                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-                AlertDialog dialog = builder.create();
-                dialog.show();
+        holder.itemView.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onPlaceClick(data);
             }
         });
-
     }
 
     @Override
@@ -73,8 +59,7 @@ public class TopPlacesAdapter extends RecyclerView.Adapter<TopPlacesAdapter.TopP
         return topPlacesDataList.size();
     }
 
-    public static final class TopPlacesViewHolder extends RecyclerView.ViewHolder{
-
+    public static final class TopPlacesViewHolder extends RecyclerView.ViewHolder {
         ImageView placeImage;
         TextView placeName, countryName, price;
 
@@ -85,8 +70,6 @@ public class TopPlacesAdapter extends RecyclerView.Adapter<TopPlacesAdapter.TopP
             placeName = itemView.findViewById(R.id.place_name);
             countryName = itemView.findViewById(R.id.country_name);
             price = itemView.findViewById(R.id.price);
-
         }
     }
-
 }

@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-            replaceFragment(new HomeFragment());
+        replaceFragment(new HomeFragment());
 
 
         binding.bottomNavigationView.setOnItemSelectedListener(menuItem -> {
@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.main, fragment);
+        fragmentTransaction.replace(R.id.fragment_container, fragment);
         fragmentTransaction.commit();
 
     }

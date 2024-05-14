@@ -1,47 +1,40 @@
 package com.example.airbnb_app;
 
 import android.os.Bundle;
-
 import androidx.fragment.app.Fragment;
 
+import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link RoomFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class RoomFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private static final String ARG_PLACE_NAME = "place_name";
+    private static final String ARG_COUNTRY_NAME = "country_name";
+    private static final String ARG_PRICE = "price";
+    private static final String ARG_IMAGE_URL = "image_url";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private String placeName;
+    private String countryName;
+    private String price;
+    private int imageUrl;
 
     public RoomFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment RoomFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static RoomFragment newInstance(String param1, String param2) {
+    public static RoomFragment newInstance(String placeName, String countryName, String price, int imageUrl) {
         RoomFragment fragment = new RoomFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putString(ARG_PLACE_NAME, placeName);
+        args.putString(ARG_COUNTRY_NAME, countryName);
+        args.putString(ARG_PRICE, price);
+        args.putInt(ARG_IMAGE_URL, imageUrl);
+        System.out.print("args:");
+        System.out.print(args);
         fragment.setArguments(args);
         return fragment;
     }
@@ -50,8 +43,11 @@ public class RoomFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            placeName = getArguments().getString(ARG_PLACE_NAME);
+            countryName = getArguments().getString(ARG_COUNTRY_NAME);
+            price = getArguments().getString(ARG_PRICE);
+            imageUrl = getArguments().getInt(ARG_IMAGE_URL);
+            System.out.print("test!!!!!!!!");
         }
     }
 
@@ -59,6 +55,36 @@ public class RoomFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_room, container, false);
+        View view = inflater.inflate(R.layout.fragment_room, container, false);
+
+        // Update UI components with the received data
+        TextView textViewPlace = view.findViewById(R.id.place_name);
+//        TextView textViewCountry = view.findViewById(R.id.country_name);
+        TextView textViewPrice = view.findViewById(R.id.price);
+        ImageView imageView = view.findViewById(R.id.place_image);
+
+        textViewPlace.setText(placeName);
+//        textViewCountry.setText(countryName);
+        textViewPrice.setText(price);
+        imageView.setImageResource(imageUrl);
+
+        return view;
     }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        ImageView backButton = view.findViewById(R.id.imageView4);
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Check if the fragment is attached to an activity
+                if (getActivity() != null) {
+                    getActivity().onBackPressed();  // This method handles the back stack as expected
+                }
+            }
+        });
+    }
+
 }
