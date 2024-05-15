@@ -1,7 +1,14 @@
 <resources>
     <string name="app_name">airbnb_app</string>
     <string name="home"></string>
-    <string name="search"></string>
+    <string name="search">Search</string>
+    <string name="max_price">Max price</string>
+    <string name="location">Location</string>
+    <string name="date_range">Date</string>
+    <string name="number_of_people">No</string>
+    <string name="arrival_date">Arrival date</string>
+    <string name="departure_date">Departure date</string>
+    <string name="search_rooms">Search rooms</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

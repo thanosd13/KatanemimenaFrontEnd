@@ -47,7 +47,6 @@ public class RoomFragment extends Fragment {
             countryName = getArguments().getString(ARG_COUNTRY_NAME);
             price = getArguments().getString(ARG_PRICE);
             imageUrl = getArguments().getInt(ARG_IMAGE_URL);
-            System.out.print("test!!!!!!!!");
         }
     }
 
