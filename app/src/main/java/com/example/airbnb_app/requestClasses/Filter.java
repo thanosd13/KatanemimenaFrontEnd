@@ -5,6 +5,9 @@ import java.util.function.Predicate;
 
 public class Filter implements Serializable {
 
+
+    private static final long serialVersionUID = 1L;
+
     private String area;
 
     public Filter(String area) {

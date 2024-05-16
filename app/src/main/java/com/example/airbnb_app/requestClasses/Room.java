@@ -3,6 +3,8 @@ package com.example.airbnb_app.requestClasses;
 import java.io.Serializable;
 
 public class Room implements Serializable {
+
+    private static final long serialVersionUID = 5L;
     private String roomName;
     private Integer noOfPersons;
     private String area;

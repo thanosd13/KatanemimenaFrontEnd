@@ -5,7 +5,7 @@ import java.util.List;
 
 public class Message implements Serializable {
 
-
+    private static final long serialVersionUID = 4L;
     private Filter filter;
 
     public String message;
@@ -36,8 +36,6 @@ public class Message implements Serializable {
         this.actionId = actionId;
         this.room = room;
     }
-
-    public Message (){};
 
     public Room getRoom() {
         return room;

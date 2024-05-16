@@ -8,6 +8,8 @@ import java.util.stream.Collectors;
 
 public class Availability implements Serializable {
 
+    private static final long serialVersionUID = 2L;
+
     private List<DateRange> bookedDates=new ArrayList<>();
     private List<DateRange> availableDates=new ArrayList<>();
 
