@@ -6,13 +6,24 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.example.airbnb_app.adapter.TopPlacesAdapter;
 import com.example.airbnb_app.model.TopPlacesData;
+import com.example.airbnb_app.requestClasses.Filter;
+import com.example.airbnb_app.requestClasses.Message;
+import com.example.airbnb_app.requestClasses.Room;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.InetAddress;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,22 +63,43 @@ public class HomeFragment extends Fragment implements TopPlacesAdapter.OnPlaceCl
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        initRecyclerView(view);
+
+        ProgressBar progressBar = view.findViewById(R.id.progressBar);
+        progressBar.setVisibility(View.VISIBLE);  // Show the ProgressBar while loading
+
+        Thread networkThread = new Thread(() -> {
+            try {
+                List<Room> rooms = connect(9999);
+                List<TopPlacesData> topPlacesDataList = new ArrayList<>();
+                for (Room room : rooms) {
+                    topPlacesDataList.add(new TopPlacesData(room.getRoomName(), room.getArea(), room.getPrice().toString(), R.drawable.topplaces));
+                }
+                getActivity().runOnUiThread(() -> {
+                    initRecyclerView(view, topPlacesDataList);
+                    progressBar.setVisibility(View.GONE);  // Hide the ProgressBar on successful load
+                });
+            } catch (Exception e) {
+                Log.e("HomeFragment", "Error loading data", e);
+                getActivity().runOnUiThread(() -> {
+                    // Update UI to show error state or hide progress bar
+                    progressBar.setVisibility(View.GONE);  // Hide the ProgressBar on error
+                    Toast.makeText(getContext(), "Failed to load data", Toast.LENGTH_SHORT).show();
+                });
+            }
+        });
+        networkThread.start();
     }
 
-    private void initRecyclerView(View rootView) {
+
+
+
+    private void initRecyclerView(View rootView, List<TopPlacesData> topPlacesDataList) {
         topPlacesRecycler = rootView.findViewById(R.id.top_places_recycler);
         topPlacesRecycler.setLayoutManager(new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false));
-
-        List<TopPlacesData> topPlacesDataList = new ArrayList<>();
-        topPlacesDataList.add(new TopPlacesData("room 1", "Athens, Greece", "$200 - $500", R.drawable.test2));
-        topPlacesDataList.add(new TopPlacesData("room 2", "Athens, Glyfada", "$200 - $500", R.drawable.test2));
-        topPlacesDataList.add(new TopPlacesData("room 1", "Athens, Greece", "$200 - $500", R.drawable.test2));
-        topPlacesDataList.add(new TopPlacesData("room 1", "Athens, Greece", "$200 - $500", R.drawable.topplaces));
-
         topPlacesAdapter = new TopPlacesAdapter(getContext(), topPlacesDataList, this);
         topPlacesRecycler.setAdapter(topPlacesAdapter);
     }
+
 
     @Override
     public void onPlaceClick(TopPlacesData place) {
@@ -81,4 +113,37 @@ public class HomeFragment extends Fragment implements TopPlacesAdapter.OnPlaceCl
             transaction.commit();
         }
     }
+
+    private List<Room> connect(int port) {
+        Filter filter = new Filter();
+        Message request = new Message(4, filter);
+        Message response;
+        Socket requestSocket = null;
+        ObjectOutputStream out = null;
+        ObjectInputStream in = null;
+        List<Room> rooms = new ArrayList<>();
+
+        try {
+            InetAddress serverAddr = InetAddress.getByName("10.0.2.2");
+            requestSocket = new Socket(serverAddr, port);
+            out = new ObjectOutputStream(requestSocket.getOutputStream());
+            out.flush();
+            out.writeObject(request);
+            in = new ObjectInputStream(requestSocket.getInputStream());
+            response = (Message) in.readObject();
+            rooms = response.getRooms(); // Assuming getRooms returns List<Room>
+        } catch (Exception e) {
+            Log.e("ConnectionError", "Error during network communication", e);
+        } finally {
+            try {
+                if (in != null) in.close();
+                if (out != null) out.close();
+                if (requestSocket != null) requestSocket.close();
+            } catch (IOException ioException) {
+                Log.e("ConnectionError", "IOException occurred while closing the connections.", ioException);
+            }
+        }
+        return rooms;
+    }
+
 }
