@@ -5,7 +5,8 @@ import java.time.LocalDate;
 
 public class DateRange implements Serializable {
 
-    private static final long serialVersionUID = 3L;
+    private static final long serialVersionUID = 3L
+            ;
     private LocalDate startDate;
     private LocalDate endDate;
 

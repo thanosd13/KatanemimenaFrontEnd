@@ -53,7 +53,6 @@
         android:padding="12dp"
         android:drawableRight="@drawable/icons8_date_picker_32_min" />
 
-
     <Spinner
         android:id="@+id/spinnerPeople"
         android:layout_width="match_parent"
@@ -77,4 +76,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/search" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/search_results"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="64dp"
+        android:layout_marginBottom="80dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
+
 </LinearLayout>

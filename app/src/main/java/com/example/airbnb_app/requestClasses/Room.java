@@ -5,6 +5,7 @@ import java.io.Serializable;
 public class Room implements Serializable {
 
     private static final long serialVersionUID = 5L;
+
     private String roomName;
     private Integer noOfPersons;
     private String area;
@@ -12,9 +13,27 @@ public class Room implements Serializable {
     private int noOfReviews;
     private String roomImage;
 
+    private byte[] image;
+
     private Integer price;
 
+    private Integer totalStars;
 
+    public Integer getTotalStars() {
+        return totalStars;
+    }
+
+    public void setTotalStars(Integer totalStars) {
+        this.totalStars = totalStars;
+    }
+
+    public byte[] getImage() {
+        return image;
+    }
+
+    public void setImage(byte[] image) {
+        this.image = image;
+    }
 
     public  Availability availability=new Availability();
 
@@ -30,6 +49,13 @@ public class Room implements Serializable {
         this.noOfReviews = noOfReviews;
         this.roomImage = roomImage;
         this.price=price;
+    }
+
+    public void calculateStars(){
+
+        this.stars = (double) totalStars/noOfReviews;
+
+
     }
 
     public Room() {

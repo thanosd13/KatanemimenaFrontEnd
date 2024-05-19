@@ -1,16 +1,30 @@
 package com.example.airbnb_app.requestClasses;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Message implements Serializable {
 
     private static final long serialVersionUID = 4L;
+
+
     private Filter filter;
 
     public String message;
 
     private int actionId;
+
+    private Map<String,Integer> map = new HashMap<>();
+
+    public Map<String, Integer> getMap() {
+        return map;
+    }
+
+    public void setMap(Map<String, Integer> map) {
+        this.map = map;
+    }
 
     public Filter getFilter() {
         return filter;
@@ -133,6 +147,8 @@ public class Message implements Serializable {
     public Message(String message) {
         this.message = message;
     }
+
+
 
     public int getActionId() {
         return actionId;

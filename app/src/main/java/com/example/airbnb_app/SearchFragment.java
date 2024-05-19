@@ -152,7 +152,7 @@ public class SearchFragment extends Fragment {
             String selectedItemStars = spinnerStars.getSelectedItem().toString();
             if (!selectedItemStars.isEmpty() && selectedItemStars.matches("\\d+")) {
                 numberOfStars[0] = Integer.parseInt(selectedItemStars);
-                 finalStars[0] = numberOfStars[0];
+                finalStars[0] = numberOfStars[0];
             }
         } catch (NumberFormatException e) {
             Toast.makeText(getContext(), "Invalid number format for number of stars", Toast.LENGTH_SHORT).show();

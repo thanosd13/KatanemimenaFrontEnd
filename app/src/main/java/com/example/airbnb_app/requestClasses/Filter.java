@@ -5,10 +5,15 @@ import java.util.function.Predicate;
 
 public class Filter implements Serializable {
 
-
     private static final long serialVersionUID = 1L;
 
     private String area;
+
+    private Double stars;
+
+
+
+
 
     public Filter(String area) {
         this.area = area;
@@ -91,7 +96,7 @@ public class Filter implements Serializable {
 
     private Integer noOfPersons;
 
-    private Double stars;
+
 
     public void setNoOfPersons(Integer noOfPersons) {
         this.noOfPersons = noOfPersons;

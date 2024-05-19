@@ -106,7 +106,7 @@ public class HomeFragment extends Fragment implements TopPlacesAdapter.OnPlaceCl
         // Ensure that the activity is correctly handling the fragment manager
         if(getActivity() != null) {
             RoomFragment roomFragment = RoomFragment.newInstance(
-                    place.getPlaceName(), place.getCountryName(), place.getPrice(), place.getImageUrl());
+            place.getPlaceName(), place.getCountryName(), place.getPrice(), place.getImageUrl());
             FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
             transaction.replace(R.id.fragment_container, roomFragment);
             transaction.addToBackStack(null);
@@ -131,7 +131,7 @@ public class HomeFragment extends Fragment implements TopPlacesAdapter.OnPlaceCl
             out.writeObject(request);
             in = new ObjectInputStream(requestSocket.getInputStream());
             response = (Message) in.readObject();
-            rooms = response.getRooms(); // Assuming getRooms returns List<Room>
+            rooms = response.getRooms();
         } catch (Exception e) {
             Log.e("ConnectionError", "Error during network communication", e);
         } finally {

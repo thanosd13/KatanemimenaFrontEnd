@@ -41,6 +41,8 @@ public class Availability implements Serializable {
 
 
 
+
+
     private boolean overlapsWithBookedDates(DateRange newRange) {
         for (DateRange booked : bookedDates) {
             if (booked.overlaps(newRange)) {
@@ -107,4 +109,21 @@ public class Availability implements Serializable {
                 .collect(Collectors.toList());
     }
 
+    public boolean isBookedInGivenRange(DateRange givenRange) {
+        for(DateRange range:bookedDates){
+            if(range.overlaps(givenRange)){
+                return true;
+            }
+
+        }
+        return false;
+    }
+
+    public int getNumberOfReservationsInGivenRange(DateRange range){
+        return (int) bookedDates.stream()
+                .filter(bookedDate -> bookedDate.overlaps(range))
+                .count();
+
+
+    }
 }
