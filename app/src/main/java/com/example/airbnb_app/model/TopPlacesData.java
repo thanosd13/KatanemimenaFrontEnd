@@ -2,6 +2,8 @@ package com.example.airbnb_app.model;
 
 import android.graphics.Bitmap;
 
+import com.example.airbnb_app.requestClasses.DateRange;
+
 public class TopPlacesData {
 
     String placeName;
@@ -10,13 +12,15 @@ public class TopPlacesData {
     Bitmap image;
 
     Double avgStar;
+    DateRange date;
 
-    public TopPlacesData(String placeName, String countryName, String price, Bitmap image, Double avgStar) {
+    public TopPlacesData(String placeName, String countryName, String price, Bitmap image, Double avgStar, DateRange date) {
         this.placeName = placeName;
         this.countryName = countryName;
         this.price = price;
         this.image = image;
         this.avgStar = avgStar;
+        this.date = date;
     }
 
     public String getPlaceName() {
@@ -57,5 +61,13 @@ public class TopPlacesData {
 
     public void setAvgStar(Double avgStar) {
         this.avgStar = avgStar;
+    }
+
+    public DateRange getDate() {
+        return date;
+    }
+
+    public void setDate(DateRange date) {
+        this.date = date;
     }
 }

@@ -8,10 +8,12 @@ import androidx.annotation.NonNull;
 public class MyParcel implements Parcelable {
 
     private Message message;
+    private Filter filter;
 
     public MyParcel(Message message) {
         this.message = message;
     }
+    public MyParcel(Filter filter) {this.filter = filter;}
 
     protected MyParcel(Parcel in) {
     }
@@ -36,6 +38,14 @@ public class MyParcel implements Parcelable {
         this.message = message;
     }
 
+    public Filter getFilter() {
+        return filter;
+    }
+
+    public void setFilter(Filter filter) {
+        this.filter = filter;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -45,6 +55,7 @@ public class MyParcel implements Parcelable {
     public void writeToParcel(@NonNull android.os.Parcel dest, int flags) {
         dest.writeSerializable(message);
     }
+
 
 
 }

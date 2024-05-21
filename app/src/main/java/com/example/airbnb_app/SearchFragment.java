@@ -117,7 +117,7 @@ public class SearchFragment extends Fragment {
     }
 
     private void gatherInputData() {
-        final Integer[] maxPrice = {null};  // Use an array to hold the value
+        final Integer[] maxPrice = {null};
         try {
             String priceText = editTextMaxPrice.getText().toString().replaceAll("[€\\s]", "");
             if (!priceText.isEmpty()) {
@@ -130,7 +130,7 @@ public class SearchFragment extends Fragment {
         final String location = editTextLocation.getText().toString().isEmpty() ? null : editTextLocation.getText().toString();
         final LocalDate arrivalDate = parseDate(editTextArrivalDate.getText().toString());
         final LocalDate departureDate = parseDate(editTextDepartureDate.getText().toString());
-        final Integer[] numberOfPeople = {null};  // Use an array to hold the value
+        final Integer[] numberOfPeople = {null};
         final Integer[] numberOfStars = {null};
         final double[] finalStars = {0.0};
 
@@ -155,24 +155,36 @@ public class SearchFragment extends Fragment {
 
         Thread networkThread = new Thread(() -> {
             Message response = connect(9999, numberOfPeople[0], maxPrice[0], location, arrivalDate, departureDate, finalStars[0]);
-            HomeFragment fragment = new HomeFragment();
-            Bundle bundle = new Bundle();
-            MyParcel parcel = new MyParcel(response);
-            bundle.putParcelable("data", parcel);
-            fragment.setArguments(bundle);
             if (getActivity() != null) {
-                getActivity().getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.fragment_container, fragment)
-                        .addToBackStack(null)  // Optional: Add transaction to back stack
-                        .commit();
-            }
-            if(response.getRooms().isEmpty()) {
-                getActivity().runOnUiThread(() -> Toast.makeText(getContext(), "Response: 0 results!", Toast.LENGTH_LONG).show());
+                getActivity().runOnUiThread(() -> {
+                    HomeFragment fragment = new HomeFragment();
+
+                    // Create the Filter object and set all properties
+                    Filter filter = new Filter(location, maxPrice[0], numberOfPeople[0], finalStars[0]);
+                    filter.setRange(new DateRange(arrivalDate, departureDate));
+
+                    // Prepare a bundle and pass both the Filter object and the Message response
+                    Bundle bundle = new Bundle();
+                    MyParcel parcel = new MyParcel(response);
+                    bundle.putSerializable("filter", filter);
+                    bundle.putParcelable("response", parcel);  // Assuming MyParcel is Parcelable
+                    fragment.setArguments(bundle);
+
+                    getActivity().getSupportFragmentManager()
+                            .beginTransaction()
+                            .replace(R.id.fragment_container, fragment)
+                            .addToBackStack(null)  // Optional: Add transaction to back stack
+                            .commit();
+
+                    if(response.getRooms().isEmpty()) {
+                        Toast.makeText(getContext(), "Response: 0 results!", Toast.LENGTH_LONG).show();
+                    }
+                });
             }
         });
         networkThread.start();
     }
+
 
     private LocalDate parseDate(String dateString) {
         if (!dateString.isEmpty()) {

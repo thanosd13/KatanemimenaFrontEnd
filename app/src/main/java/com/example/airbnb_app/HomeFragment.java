@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import com.example.airbnb_app.adapter.TopPlacesAdapter;
 import com.example.airbnb_app.model.TopPlacesData;
+import com.example.airbnb_app.requestClasses.DateRange;
 import com.example.airbnb_app.requestClasses.Filter;
 import com.example.airbnb_app.requestClasses.Message;
 import com.example.airbnb_app.requestClasses.MyParcel;
@@ -68,14 +69,15 @@ public class HomeFragment extends Fragment implements TopPlacesAdapter.OnPlaceCl
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         if(getArguments() !=null) {
-            MyParcel parcel = getArguments().getParcelable("data");
+            MyParcel parcel = getArguments().getParcelable("response");
+            Filter filter = (Filter) getArguments().getSerializable("filter");
             Message response = parcel.getMessage();
             ProgressBar progressBar = view.findViewById(R.id.progressBar);
             progressBar.setVisibility(View.VISIBLE);
             List<Room> rooms = response.getRooms();
             List<TopPlacesData> topPlacesDataList = new ArrayList<>();
             for (Room room : rooms) {
-                topPlacesDataList.add(new TopPlacesData(room.getRoomName(), room.getArea(), room.getPrice().toString(), byteArrayToBitmap(room.getImage()), room.getStars()));
+                topPlacesDataList.add(new TopPlacesData(room.getRoomName(), room.getArea(), room.getPrice().toString(), byteArrayToBitmap(room.getImage()), room.getStars(), filter.getRange()));
             }
             getActivity().runOnUiThread(() -> {
                 initRecyclerView(view, topPlacesDataList);
@@ -91,7 +93,7 @@ public class HomeFragment extends Fragment implements TopPlacesAdapter.OnPlaceCl
                     List<Room> rooms = connect(9999);
                     List<TopPlacesData> topPlacesDataList = new ArrayList<>();
                     for (Room room : rooms) {
-                        topPlacesDataList.add(new TopPlacesData(room.getRoomName(), room.getArea(), room.getPrice().toString(), byteArrayToBitmap(room.getImage()), room.getStars()));
+                        topPlacesDataList.add(new TopPlacesData(room.getRoomName(), room.getArea(), room.getPrice().toString(), byteArrayToBitmap(room.getImage()), room.getStars(), new DateRange(null,null)));
                     }
                     getActivity().runOnUiThread(() -> {
                         initRecyclerView(view, topPlacesDataList);
@@ -138,7 +140,7 @@ public class HomeFragment extends Fragment implements TopPlacesAdapter.OnPlaceCl
         // Ensure that the activity is correctly handling the fragment manager
         if(getActivity() != null) {
             RoomFragment roomFragment = RoomFragment.newInstance(
-            place.getPlaceName(), place.getCountryName(), place.getPrice(), place.getImage(), place.getAvgStar());
+            place.getPlaceName(), place.getCountryName(), place.getPrice(), place.getImage(), place.getAvgStar(), place.getDate());
             FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
             transaction.replace(R.id.fragment_container, roomFragment);
             transaction.addToBackStack(null);

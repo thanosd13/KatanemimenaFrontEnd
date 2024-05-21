@@ -1,15 +1,37 @@
 package com.example.airbnb_app;
 
+import android.app.AlertDialog;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.example.airbnb_app.model.TopPlacesData;
+import com.example.airbnb_app.requestClasses.DateRange;
+import com.example.airbnb_app.requestClasses.Filter;
+import com.example.airbnb_app.requestClasses.Message;
+import com.example.airbnb_app.requestClasses.Room;
 
 import org.w3c.dom.Text;
+
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.InetAddress;
+import java.net.Socket;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 public class RoomFragment extends Fragment {
 
@@ -19,18 +41,20 @@ public class RoomFragment extends Fragment {
     private static final String ARG_IMAGE_BITMAP = "image_bitmap";
 
     private static final String AVG_STARS = "avg_stars";
+    private static final String DATE_RANGE = "date_range";
 
     private String placeName;
     private String countryName;
     private String price;
     private Bitmap imageBitmap;
     private String avgStars;
+    private DateRange dateRange;
 
     public RoomFragment() {
         // Required empty public constructor
     }
 
-    public static RoomFragment newInstance(String placeName, String countryName, String price, Bitmap imageBitmap, Double stars) {
+    public static RoomFragment newInstance(String placeName, String countryName, String price, Bitmap imageBitmap, Double stars, DateRange date) {
         RoomFragment fragment = new RoomFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PLACE_NAME, placeName);
@@ -38,6 +62,7 @@ public class RoomFragment extends Fragment {
         args.putString(ARG_PRICE, price);
         args.putParcelable(ARG_IMAGE_BITMAP, imageBitmap);
         args.putString(AVG_STARS, String.format("%.1f", stars));
+        args.putSerializable(DATE_RANGE, date);
         fragment.setArguments(args);
         return fragment;
     }
@@ -51,6 +76,8 @@ public class RoomFragment extends Fragment {
             price = getArguments().getString(ARG_PRICE);
             imageBitmap = getArguments().getParcelable(ARG_IMAGE_BITMAP);
             avgStars = getArguments().getString(AVG_STARS);
+            dateRange = (DateRange) getArguments().getSerializable(DATE_RANGE);
+            System.out.println("paff!!!");
         }
     }
 
@@ -91,5 +118,116 @@ public class RoomFragment extends Fragment {
                 }
             }
         });
+
+        Button bookNowButton = view.findViewById(R.id.button);
+        bookNowButton.setOnClickListener(v -> bookingNow());
     }
+
+    private void bookingNow() {
+
+        if(dateRange.getEndDate() == null || dateRange.getStartDate() == null) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            builder.setTitle("Error");
+            builder.setMessage("You need to fill in the dates you wish to make the reservation for.");
+
+            builder.setNegativeButton("Ok", (dialog, which) -> {
+                // Dismiss dialog and cancel booking
+                dialog.dismiss();
+            });
+
+            AlertDialog dialog = builder.create();
+            dialog.show();
+            return;
+        }
+
+        Thread networkThread = new Thread(() -> {
+            try {
+                Message response= connect(9999);
+                if (response.getActionId() == 37) {
+                    if (getActivity() != null) {
+                        getActivity().runOnUiThread(() -> {
+                            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                            builder.setTitle("Booking Successful");
+                            builder.setMessage("Congratulations. " + response.getMessage() +"!" + " Please rate your experience!");
+                            builder.setPositiveButton("OK", (dialog, which) -> {
+                                // User clicked OK, perform the fragment transaction to RatingFragment
+                                FragmentManager fragmentManager = getParentFragmentManager();
+                                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                                RatingFragment ratingFragment = new RatingFragment();
+                                fragmentTransaction.replace(R.id.fragment_container, ratingFragment);
+                                fragmentTransaction.commit();  // Commit the transaction
+                            });
+
+                            AlertDialog dialog = builder.create();
+                            dialog.show();
+                        });
+                    }
+                } else if (response.getActionId() == 38) {
+                    if (getActivity() != null) {
+                        getActivity().runOnUiThread(() -> {
+                            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                            builder.setTitle("Error");
+                            builder.setMessage(response.getMessage() +"!");
+                            builder.setNegativeButton("Ok", (dialog, which) -> {
+                                dialog.dismiss();
+                            });
+
+                            AlertDialog dialogNew = builder.create();
+                            dialogNew.show();
+                        });
+                    }
+                }
+            } catch (Exception e) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                builder.setTitle("Error");
+                builder.setMessage("Something went wrong!");
+
+                builder.setNegativeButton("Ok", (dialog, which) -> {
+                    dialog.dismiss();
+                });
+
+                AlertDialog dialog = builder.create();
+                dialog.show();
+            }
+        });
+        networkThread.start();
+
+    }
+
+    public void successMessage () {
+
+    }
+
+    private Message connect(int port) {
+        Filter filter = new Filter();
+        filter.setRoomName(placeName);
+        filter.setRange(dateRange);
+        Message request = new Message(6, filter);
+        Message response = null;
+        Socket requestSocket = null;
+        ObjectOutputStream out = null;
+        ObjectInputStream in = null;
+
+        try {
+            InetAddress serverAddr = InetAddress.getByName("10.0.2.2");
+            requestSocket = new Socket(serverAddr, port);
+            out = new ObjectOutputStream(requestSocket.getOutputStream());
+            out.flush();
+            out.writeObject(request);
+            in = new ObjectInputStream(requestSocket.getInputStream());
+            response = (Message) in.readObject();
+        } catch (Exception e) {
+            Log.e("ConnectionError", "Error during network communication", e);
+        } finally {
+            try {
+                if (in != null) in.close();
+                if (out != null) out.close();
+                if (requestSocket != null) requestSocket.close();
+            } catch (IOException ioException) {
+                Log.e("ConnectionError", "IOException occurred while closing the connections.", ioException);
+            }
+        }
+        return response;
+    }
+
 }
