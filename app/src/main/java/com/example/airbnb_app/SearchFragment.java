@@ -1,9 +1,8 @@
 package com.example.airbnb_app;
+
 import android.app.DatePickerDialog;
 import android.os.Bundle;
-
 import androidx.fragment.app.Fragment;
-
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -20,6 +19,8 @@ import android.widget.Toast;
 import com.example.airbnb_app.requestClasses.DateRange;
 import com.example.airbnb_app.requestClasses.Filter;
 import com.example.airbnb_app.requestClasses.Message;
+import com.example.airbnb_app.requestClasses.MyParcel;
+import com.example.airbnb_app.requestClasses.Room;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -38,20 +39,16 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-
 public class SearchFragment extends Fragment {
-
-
 
     private EditText editTextArrivalDate, editTextDepartureDate, editTextMaxPrice, editTextLocation;
     private int year, month, day;
     private Spinner spinnerPeople;
     private Spinner spinnerStars;
+
     public SearchFragment() {
         // Required empty public constructor
     }
-
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -59,6 +56,7 @@ public class SearchFragment extends Fragment {
         setupViews(view);
         initializePeopleSpinner();
         initializeStarsSpinner();
+
         // Set up the button click listener
         Button searchButton = view.findViewById(R.id.buttonSearch);
         searchButton.setOnClickListener(new View.OnClickListener() {
@@ -118,9 +116,6 @@ public class SearchFragment extends Fragment {
         });
     }
 
-
-
-
     private void gatherInputData() {
         final Integer[] maxPrice = {null};  // Use an array to hold the value
         try {
@@ -159,8 +154,22 @@ public class SearchFragment extends Fragment {
         }
 
         Thread networkThread = new Thread(() -> {
-            String response = connect(9999, numberOfPeople[0], maxPrice[0], location, arrivalDate, departureDate, finalStars[0]);
-            getActivity().runOnUiThread(() -> Toast.makeText(getContext(), "Response: " + response, Toast.LENGTH_LONG).show());
+            Message response = connect(9999, numberOfPeople[0], maxPrice[0], location, arrivalDate, departureDate, finalStars[0]);
+            HomeFragment fragment = new HomeFragment();
+            Bundle bundle = new Bundle();
+            MyParcel parcel = new MyParcel(response);
+            bundle.putParcelable("data", parcel);
+            fragment.setArguments(bundle);
+            if (getActivity() != null) {
+                getActivity().getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.fragment_container, fragment)
+                        .addToBackStack(null)  // Optional: Add transaction to back stack
+                        .commit();
+            }
+            if(response.getRooms().isEmpty()) {
+                getActivity().runOnUiThread(() -> Toast.makeText(getContext(), "Response: 0 results!", Toast.LENGTH_LONG).show());
+            }
         });
         networkThread.start();
     }
@@ -181,13 +190,10 @@ public class SearchFragment extends Fragment {
         return null;
     }
 
-
-
-
     private void initializePeopleSpinner() {
         List<String> peopleNumbers = new ArrayList<>();
         peopleNumbers.add("Adults"); // This will act as a hint
-        for (int i = 1; i <= 10; i++) {
+        for (int i = 1; i <= 7; i++) {
             peopleNumbers.add(Integer.toString(i));
         }
 
@@ -209,7 +215,6 @@ public class SearchFragment extends Fragment {
         spinnerStars.setAdapter(adapter);
         spinnerStars.setSelection(0, false); // Display hint by default
     }
-
 
     private void showDatePickerDialog(boolean isArrival) {
         Calendar c = Calendar.getInstance();
@@ -247,9 +252,7 @@ public class SearchFragment extends Fragment {
         datePickerDialog.show();
     }
 
-
-
-    private String connect(int port, Integer numberOfPeople, Integer maxPrice, String location, LocalDate startDate, LocalDate endDate, Double stars) {
+    private Message connect(int port, Integer numberOfPeople, Integer maxPrice, String location, LocalDate startDate, LocalDate endDate, Double stars) {
         Filter filter = new Filter();
         DateRange date = null;
         if (maxPrice != null) filter.setPrice(maxPrice);
@@ -288,12 +291,6 @@ public class SearchFragment extends Fragment {
                 Log.e("ConnectionError", "IOException occurred while closing the connections.", ioException);
             }
         }
-        return responseDetails;
+        return response;
     }
-
-
-
-
-
-
 }

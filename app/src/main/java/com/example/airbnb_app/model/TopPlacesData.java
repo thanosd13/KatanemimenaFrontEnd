@@ -1,25 +1,22 @@
 package com.example.airbnb_app.model;
 
+import android.graphics.Bitmap;
+
 public class TopPlacesData {
 
     String placeName;
     String countryName;
     String price;
-    Integer imageUrl;
+    Bitmap image;
 
-    public Integer getImageUrl() {
-        return imageUrl;
-    }
+    Double avgStar;
 
-    public void setImageUrl(Integer imageUrl) {
-        this.imageUrl = imageUrl;
-    }
-
-    public TopPlacesData(String placeName, String countryName, String price, Integer imageUrl) {
+    public TopPlacesData(String placeName, String countryName, String price, Bitmap image, Double avgStar) {
         this.placeName = placeName;
         this.countryName = countryName;
         this.price = price;
-        this.imageUrl = imageUrl;
+        this.image = image;
+        this.avgStar = avgStar;
     }
 
     public String getPlaceName() {
@@ -44,5 +41,21 @@ public class TopPlacesData {
 
     public void setPrice(String price) {
         this.price = price;
+    }
+
+    public Bitmap getImage() {
+        return image;
+    }
+
+    public void setImage(Bitmap image) {
+        this.image = image;
+    }
+
+    public Double getAvgStar() {
+        return avgStar;
+    }
+
+    public void setAvgStar(Double avgStar) {
+        this.avgStar = avgStar;
     }
 }

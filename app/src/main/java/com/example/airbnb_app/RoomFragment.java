@@ -1,40 +1,43 @@
 package com.example.airbnb_app;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
-
-import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import org.w3c.dom.Text;
+
 public class RoomFragment extends Fragment {
 
     private static final String ARG_PLACE_NAME = "place_name";
     private static final String ARG_COUNTRY_NAME = "country_name";
     private static final String ARG_PRICE = "price";
-    private static final String ARG_IMAGE_URL = "image_url";
+    private static final String ARG_IMAGE_BITMAP = "image_bitmap";
+
+    private static final String AVG_STARS = "avg_stars";
 
     private String placeName;
     private String countryName;
     private String price;
-    private int imageUrl;
+    private Bitmap imageBitmap;
+    private String avgStars;
 
     public RoomFragment() {
         // Required empty public constructor
     }
 
-    public static RoomFragment newInstance(String placeName, String countryName, String price, int imageUrl) {
+    public static RoomFragment newInstance(String placeName, String countryName, String price, Bitmap imageBitmap, Double stars) {
         RoomFragment fragment = new RoomFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PLACE_NAME, placeName);
         args.putString(ARG_COUNTRY_NAME, countryName);
         args.putString(ARG_PRICE, price);
-        args.putInt(ARG_IMAGE_URL, imageUrl);
-        System.out.print("args:");
-        System.out.print(args);
+        args.putParcelable(ARG_IMAGE_BITMAP, imageBitmap);
+        args.putString(AVG_STARS, String.format("%.1f", stars));
         fragment.setArguments(args);
         return fragment;
     }
@@ -46,7 +49,8 @@ public class RoomFragment extends Fragment {
             placeName = getArguments().getString(ARG_PLACE_NAME);
             countryName = getArguments().getString(ARG_COUNTRY_NAME);
             price = getArguments().getString(ARG_PRICE);
-            imageUrl = getArguments().getInt(ARG_IMAGE_URL);
+            imageBitmap = getArguments().getParcelable(ARG_IMAGE_BITMAP);
+            avgStars = getArguments().getString(AVG_STARS);
         }
     }
 
@@ -58,14 +62,17 @@ public class RoomFragment extends Fragment {
 
         // Update UI components with the received data
         TextView textViewPlace = view.findViewById(R.id.place_name);
-//        TextView textViewCountry = view.findViewById(R.id.country_name);
         TextView textViewPrice = view.findViewById(R.id.price);
         ImageView imageView = view.findViewById(R.id.place_image);
+        TextView textViewStars = view.findViewById(R.id.textView7);
 
         textViewPlace.setText(placeName);
-//        textViewCountry.setText(countryName);
         textViewPrice.setText(price);
-        imageView.setImageResource(imageUrl);
+        textViewStars.setText(avgStars);
+
+        if (imageBitmap != null) {
+            imageView.setImageBitmap(imageBitmap);
+        }
 
         return view;
     }
@@ -85,5 +92,4 @@ public class RoomFragment extends Fragment {
             }
         });
     }
-
 }

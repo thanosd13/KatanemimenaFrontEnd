@@ -32,13 +32,11 @@
         app:layout_constraintStart_toEndOf="@+id/place_image"
         app:layout_constraintTop_toTopOf="@+id/place_image" />
 
-
     <TextView
         android:id="@+id/country_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="2dp"
-        android:text="Spain"
         app:layout_constraintStart_toStartOf="@id/place_name"
         app:layout_constraintTop_toBottomOf="@id/place_name" />
 
@@ -47,9 +45,45 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="2dp"
-        android:text="From 200$"
+        android:textStyle="bold"
         app:layout_constraintStart_toStartOf="@id/country_name"
         app:layout_constraintTop_toBottomOf="@id/country_name" />
+
+    <TextView
+        android:id="@+id/euro_symbol"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:textStyle="bold"
+        android:text="€"
+        app:layout_constraintStart_toEndOf="@id/price"
+        app:layout_constraintTop_toTopOf="@id/price"
+        app:layout_constraintBottom_toBottomOf="@id/price" />
+
+    <TextView
+        android:id="@+id/textView7"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="110dp"
+        android:fontFamily="@font/rubik"
+        android:text="4.5"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="@+id/price"
+        app:layout_constraintEnd_toStartOf="@+id/imageView5"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toEndOf="@id/euro_symbol"
+        app:layout_constraintTop_toTopOf="@+id/price"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <ImageView
+        android:id="@+id/imageView5"
+        android:layout_width="16dp"
+        android:layout_height="20dp"
+        app:layout_constraintBottom_toBottomOf="@+id/price"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/price"
+        app:layout_constraintStart_toEndOf="@id/textView7"
+        app:srcCompat="@drawable/star" />
 
     <ImageView
         android:id="@+id/imageView"
