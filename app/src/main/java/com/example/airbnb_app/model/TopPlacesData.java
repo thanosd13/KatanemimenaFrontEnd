@@ -13,14 +13,16 @@ public class TopPlacesData {
 
     Double avgStar;
     DateRange date;
+    int noOfReviews;
 
-    public TopPlacesData(String placeName, String countryName, String price, Bitmap image, Double avgStar, DateRange date) {
+    public TopPlacesData(String placeName, String countryName, String price, Bitmap image, Double avgStar, DateRange date, int noOfReviews) {
         this.placeName = placeName;
         this.countryName = countryName;
         this.price = price;
         this.image = image;
         this.avgStar = avgStar;
         this.date = date;
+        this.noOfReviews = noOfReviews;
     }
 
     public String getPlaceName() {
@@ -69,5 +71,13 @@ public class TopPlacesData {
 
     public void setDate(DateRange date) {
         this.date = date;
+    }
+
+    public int getNoOfReviews() {
+        return noOfReviews;
+    }
+
+    public void setNoOfReviews(int noOfReviews) {
+        this.noOfReviews = noOfReviews;
     }
 }

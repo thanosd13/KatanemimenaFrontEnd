@@ -46,6 +46,7 @@ public class TopPlacesAdapter extends RecyclerView.Adapter<TopPlacesAdapter.TopP
         holder.placeName.setText(data.getPlaceName());
         holder.price.setText(data.getPrice());
         holder.placeImage.setImageBitmap(data.getImage());
+        holder.noOfReviews.setText("(" + String.valueOf(data.getNoOfReviews()) +")");
 
         // Format the star rating to one decimal place
         double stars = data.getAvgStar();
@@ -66,7 +67,7 @@ public class TopPlacesAdapter extends RecyclerView.Adapter<TopPlacesAdapter.TopP
 
     public static final class TopPlacesViewHolder extends RecyclerView.ViewHolder {
         ImageView placeImage;
-        TextView placeName, countryName, price, stars;
+        TextView placeName, countryName, price, stars, noOfReviews;
 
         public TopPlacesViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -76,6 +77,7 @@ public class TopPlacesAdapter extends RecyclerView.Adapter<TopPlacesAdapter.TopP
             countryName = itemView.findViewById(R.id.country_name);
             price = itemView.findViewById(R.id.price);
             stars = itemView.findViewById(R.id.textView7);
+            noOfReviews = itemView.findViewById(R.id.rating_count);
         }
     }
 }

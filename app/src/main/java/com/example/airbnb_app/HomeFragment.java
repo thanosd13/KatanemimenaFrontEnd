@@ -77,7 +77,7 @@ public class HomeFragment extends Fragment implements TopPlacesAdapter.OnPlaceCl
             List<Room> rooms = response.getRooms();
             List<TopPlacesData> topPlacesDataList = new ArrayList<>();
             for (Room room : rooms) {
-                topPlacesDataList.add(new TopPlacesData(room.getRoomName(), room.getArea(), room.getPrice().toString(), byteArrayToBitmap(room.getImage()), room.getStars(), filter.getRange()));
+                topPlacesDataList.add(new TopPlacesData(room.getRoomName(), room.getArea(), room.getPrice().toString(), byteArrayToBitmap(room.getImage()), room.getStars(), filter.getRange(), room.getNoOfReviews()));
             }
             getActivity().runOnUiThread(() -> {
                 initRecyclerView(view, topPlacesDataList);
@@ -93,7 +93,7 @@ public class HomeFragment extends Fragment implements TopPlacesAdapter.OnPlaceCl
                     List<Room> rooms = connect(9999);
                     List<TopPlacesData> topPlacesDataList = new ArrayList<>();
                     for (Room room : rooms) {
-                        topPlacesDataList.add(new TopPlacesData(room.getRoomName(), room.getArea(), room.getPrice().toString(), byteArrayToBitmap(room.getImage()), room.getStars(), new DateRange(null,null)));
+                        topPlacesDataList.add(new TopPlacesData(room.getRoomName(), room.getArea(), room.getPrice().toString(), byteArrayToBitmap(room.getImage()), room.getStars(), new DateRange(null,null), room.getNoOfReviews()));
                     }
                     getActivity().runOnUiThread(() -> {
                         initRecyclerView(view, topPlacesDataList);

@@ -145,15 +145,19 @@ public class RoomFragment extends Fragment {
                 Message response= connect(9999);
                 if (response.getActionId() == 37) {
                     if (getActivity() != null) {
+
                         getActivity().runOnUiThread(() -> {
                             AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                             builder.setTitle("Booking Successful");
                             builder.setMessage("Congratulations. " + response.getMessage() +"!" + " Please rate your experience!");
                             builder.setPositiveButton("OK", (dialog, which) -> {
-                                // User clicked OK, perform the fragment transaction to RatingFragment
+                                RatingFragment ratingFragment = new RatingFragment();
+
+                                Bundle args = new Bundle();
+                                args.putString("room_name", placeName);
+                                ratingFragment.setArguments(args);
                                 FragmentManager fragmentManager = getParentFragmentManager();
                                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                                RatingFragment ratingFragment = new RatingFragment();
                                 fragmentTransaction.replace(R.id.fragment_container, ratingFragment);
                                 fragmentTransaction.commit();  // Commit the transaction
                             });
