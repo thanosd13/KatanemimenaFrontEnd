@@ -1,5 +1,6 @@
 package com.example.airbnb_app;
 
+import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -41,6 +42,8 @@ public class HomeFragment extends Fragment implements TopPlacesAdapter.OnPlaceCl
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
+    private static final String MASTER_IP="192.168.1.9";
+
     public HomeFragment() {
         // Required empty public constructor
     }
@@ -79,10 +82,19 @@ public class HomeFragment extends Fragment implements TopPlacesAdapter.OnPlaceCl
             for (Room room : rooms) {
                 topPlacesDataList.add(new TopPlacesData(room.getRoomName(), room.getArea(), room.getPrice().toString(), byteArrayToBitmap(room.getImage()), room.getStars(), filter.getRange(), room.getNoOfReviews()));
             }
+            Activity activity = getActivity();
+            if (activity != null && isAdded()) {
+
+
             getActivity().runOnUiThread(() -> {
+                if(isAdded()){
+
+
                 initRecyclerView(view, topPlacesDataList);
-                progressBar.setVisibility(View.GONE);  // Hide the ProgressBar on successful load
+                progressBar.setVisibility(View.GONE);
+                }// Hide the ProgressBar on successful load
             });
+            }
         }
         else {
             ProgressBar progressBar = view.findViewById(R.id.progressBar);
@@ -95,16 +107,30 @@ public class HomeFragment extends Fragment implements TopPlacesAdapter.OnPlaceCl
                     for (Room room : rooms) {
                         topPlacesDataList.add(new TopPlacesData(room.getRoomName(), room.getArea(), room.getPrice().toString(), byteArrayToBitmap(room.getImage()), room.getStars(), new DateRange(null,null), room.getNoOfReviews()));
                     }
-                    getActivity().runOnUiThread(() -> {
+                    Activity activity = getActivity();
+                    if (activity != null && isAdded()) {
+
+
+
+
+                        getActivity().runOnUiThread(() -> {
+                        if(isAdded()){
+
+
                         initRecyclerView(view, topPlacesDataList);
-                        progressBar.setVisibility(View.GONE);  // Hide the ProgressBar on successful load
+                        progressBar.setVisibility(View.GONE);
+                        }// Hide the ProgressBar on successful load
                     });
+                    }
                 } catch (Exception e) {
                     Log.e("HomeFragment", "Error loading data", e);
                     getActivity().runOnUiThread(() -> {
-                        // Update UI to show error state or hide progress bar
-                        progressBar.setVisibility(View.GONE);  // Hide the ProgressBar on error
+
+                        if(isAdded()) {
+                            // Update UI to show error state or hide progress bar
+                            progressBar.setVisibility(View.GONE);  // Hide the ProgressBar on error
 //                        Toast.makeText(getContext(), "Failed to load data", Toast.LENGTH_SHORT).show();
+                        }
                     });
                 }
             });
@@ -158,8 +184,7 @@ public class HomeFragment extends Fragment implements TopPlacesAdapter.OnPlaceCl
         List<Room> rooms = new ArrayList<>();
 
         try {
-            InetAddress serverAddr = InetAddress.getByName("10.0.2.2");
-            requestSocket = new Socket(serverAddr, port);
+            requestSocket = new Socket(MASTER_IP, port);
             out = new ObjectOutputStream(requestSocket.getOutputStream());
             out.flush();
             out.writeObject(request);

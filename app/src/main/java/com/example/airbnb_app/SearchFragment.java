@@ -46,6 +46,8 @@ public class SearchFragment extends Fragment {
     private Spinner spinnerPeople;
     private Spinner spinnerStars;
 
+    private static final String MASTER_IP="192.168.1.9";
+
     public SearchFragment() {
         // Required empty public constructor
     }
@@ -283,8 +285,8 @@ public class SearchFragment extends Fragment {
         String responseDetails = "";
 
         try {
-            InetAddress serverAddr = InetAddress.getByName("10.0.2.2");
-            requestSocket = new Socket(serverAddr, port);
+
+            requestSocket = new Socket(MASTER_IP, port);
             out = new ObjectOutputStream(requestSocket.getOutputStream());
             out.flush();
             out.writeObject(request);

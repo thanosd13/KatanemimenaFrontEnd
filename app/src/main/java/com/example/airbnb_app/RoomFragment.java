@@ -43,6 +43,8 @@ public class RoomFragment extends Fragment {
     private static final String AVG_STARS = "avg_stars";
     private static final String DATE_RANGE = "date_range";
 
+    private static final String MASTER_IP="192.168.1.9";
+
     private String placeName;
     private String countryName;
     private String price;
@@ -213,8 +215,7 @@ public class RoomFragment extends Fragment {
         ObjectInputStream in = null;
 
         try {
-            InetAddress serverAddr = InetAddress.getByName("10.0.2.2");
-            requestSocket = new Socket(serverAddr, port);
+            requestSocket = new Socket(MASTER_IP, port);
             out = new ObjectOutputStream(requestSocket.getOutputStream());
             out.flush();
             out.writeObject(request);

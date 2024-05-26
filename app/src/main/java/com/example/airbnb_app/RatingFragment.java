@@ -31,6 +31,7 @@ public class RatingFragment extends Fragment {
 
     private String roomName; // Variable to store the room name passed in as an argument
 
+    private static final String MASTER_IP="192.168.1.9";
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
@@ -60,6 +61,12 @@ public class RatingFragment extends Fragment {
                                 builder.setMessage("Thank you so much!");
                                 builder.setPositiveButton("OK", (dialog, which) -> {
                                     dialog.dismiss();
+                                    HomeFragment fragment=new HomeFragment();
+                                    getActivity().getSupportFragmentManager()
+                                            .beginTransaction()
+                                            .replace(R.id.fragment_container, fragment)
+                                            .addToBackStack(null)  // Optional: Add transaction to back stack
+                                            .commit();
                                 });
 
                                 AlertDialog dialog = builder.create();
@@ -87,8 +94,7 @@ public class RatingFragment extends Fragment {
         ObjectInputStream in = null;
 
         try {
-            InetAddress serverAddr = InetAddress.getByName("10.0.2.2");
-            requestSocket = new Socket(serverAddr, port);
+            requestSocket = new Socket(MASTER_IP, port);
             out = new ObjectOutputStream(requestSocket.getOutputStream());
             out.flush();
             out.writeObject(request);
